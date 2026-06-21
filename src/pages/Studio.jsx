@@ -216,23 +216,28 @@ export default function Studio() {
           </motion.div>
         </div>
 
-        {/* Right: DraftingDesk — desktop only */}
-        {isDesktop && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            transition={{ duration: 1.6, delay: 0.1 }}
-            style={{ flex: '0 0 48%', position: 'relative', height: '100vh' }}
-          >
-            <Suspense fallback={null}><DraftingDesk /></Suspense>
-            <div style={{
-              position: 'absolute', inset: 0, pointerEvents: 'none',
-              background: `
+        {/* Right: DraftingDesk — all screens, stacked on mobile */}
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ duration: 1.6, delay: 0.1 }}
+          style={{
+            flex: isDesktop ? '0 0 48%' : 'none',
+            width: isNarrow ? '100%' : undefined,
+            position: 'relative',
+            height: isMobile ? '280px' : isTablet ? '360px' : '100vh',
+          }}
+        >
+          <Suspense fallback={null}><DraftingDesk /></Suspense>
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: isNarrow
+              ? 'linear-gradient(to bottom, #191b1f 0%, transparent 30%), linear-gradient(to top, #191b1f 0%, transparent 25%)'
+              : `
                 radial-gradient(ellipse 90% 90% at 60% 50%, transparent 20%, #191b1f 100%),
                 linear-gradient(to left, transparent 48%, #191b1f 100%)
               `,
-            }} />
-          </motion.div>
-        )}
+          }} />
+        </motion.div>
 
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(to bottom, transparent, #191b1f)', zIndex: 3, pointerEvents: 'none' }} />
       </section>

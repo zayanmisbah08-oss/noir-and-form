@@ -160,23 +160,28 @@ export default function Home() {
           )}
         </div>
 
-        {/* Right / 3D panel — desktop only */}
-        {isDesktop && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.6, delay: 0.05, ease }}
-            style={{ flex: '0 0 50%', position: 'relative', height: '100vh' }}
-          >
-            <Suspense fallback={null}><ChromePolyhedron /></Suspense>
-            <div style={{
-              position: 'absolute', inset: 0, pointerEvents: 'none',
-              background: `
+        {/* Right / 3D panel — all screens, stacked on mobile */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.6, delay: 0.05, ease }}
+          style={{
+            flex: isDesktop ? '0 0 50%' : 'none',
+            width: isNarrow ? '100%' : undefined,
+            position: 'relative',
+            height: isMobile ? '300px' : isTablet ? '380px' : '100vh',
+          }}
+        >
+          <Suspense fallback={null}><ChromePolyhedron /></Suspense>
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: isNarrow
+              ? 'linear-gradient(to bottom, #000000 0%, transparent 30%), linear-gradient(to top, #000000 0%, transparent 25%)'
+              : `
                 radial-gradient(ellipse 85% 95% at 60% 50%, transparent 32%, #000000 100%),
                 linear-gradient(to left, transparent 68%, #000000 100%)
               `,
-            }} />
-          </motion.div>
-        )}
+          }} />
+        </motion.div>
 
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0,

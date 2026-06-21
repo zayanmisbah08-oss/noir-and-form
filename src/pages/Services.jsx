@@ -114,23 +114,28 @@ export default function Services() {
           </motion.div>
         </div>
 
-        {/* Right: GeometricConstellation — desktop only */}
-        {isDesktop && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            transition={{ duration: 1.5, delay: 0.1 }}
-            style={{ flex: '0 0 50%', position: 'relative', height: '100vh' }}
-          >
-            <Suspense fallback={null}><GeometricConstellation /></Suspense>
-            <div style={{
-              position: 'absolute', inset: 0, pointerEvents: 'none',
-              background: `
+        {/* Right: GeometricConstellation — all screens, stacked on mobile */}
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ duration: 1.5, delay: 0.1 }}
+          style={{
+            flex: isDesktop ? '0 0 50%' : 'none',
+            width: isNarrow ? '100%' : undefined,
+            position: 'relative',
+            height: isMobile ? '280px' : isTablet ? '360px' : '100vh',
+          }}
+        >
+          <Suspense fallback={null}><GeometricConstellation /></Suspense>
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: isNarrow
+              ? 'linear-gradient(to bottom, #000000 0%, transparent 30%), linear-gradient(to top, #191b1f 0%, transparent 25%)'
+              : `
                 radial-gradient(ellipse 92% 92% at 58% 50%, transparent 22%, #000000 100%),
                 linear-gradient(to left, transparent 58%, #000000 100%)
               `,
-            }} />
-          </motion.div>
-        )}
+          }} />
+        </motion.div>
 
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 130, background: 'linear-gradient(to bottom, transparent, #191b1f)', zIndex: 3, pointerEvents: 'none' }} />
       </section>

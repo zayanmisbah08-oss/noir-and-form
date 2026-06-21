@@ -190,17 +190,25 @@ export default function Work() {
           </motion.div>
         </div>
 
-        {/* Right: RoomDiorama — desktop only */}
-        {isDesktop && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            transition={{ duration: 1.4, delay: 0.1 }}
-            style={{ flex: '0 0 45%', position: 'relative', height: '100vh' }}
-          >
-            <Suspense fallback={null}><RoomDiorama /></Suspense>
-            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(to left, transparent 38%, #495764 100%)' }} />
-          </motion.div>
-        )}
+        {/* Right: RoomDiorama — all screens, stacked on mobile */}
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ duration: 1.4, delay: 0.1 }}
+          style={{
+            flex: isDesktop ? '0 0 45%' : 'none',
+            width: isNarrow ? '100%' : undefined,
+            position: 'relative',
+            height: isMobile ? '280px' : isTablet ? '360px' : '100vh',
+          }}
+        >
+          <Suspense fallback={null}><RoomDiorama /></Suspense>
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: isNarrow
+              ? 'linear-gradient(to bottom, #495764 0%, transparent 30%), linear-gradient(to top, #191b1f 0%, transparent 25%)'
+              : 'linear-gradient(to left, transparent 38%, #495764 100%)',
+          }} />
+        </motion.div>
 
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 160, background: 'linear-gradient(to bottom, transparent, #191b1f)', zIndex: 3, pointerEvents: 'none' }} />
       </section>

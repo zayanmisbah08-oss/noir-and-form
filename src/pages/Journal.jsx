@@ -196,17 +196,25 @@ export default function Journal() {
           </motion.div>
         </div>
 
-        {/* Right: FloatingBooks — desktop only */}
-        {isDesktop && (
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            transition={{ duration: 1.6, delay: 0.08 }}
-            style={{ flex: '0 0 50%', position: 'relative', height: '100vh' }}
-          >
-            <Suspense fallback={null}><FloatingBooks /></Suspense>
-            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(to left, transparent 38%, #191b1f 100%)' }} />
-          </motion.div>
-        )}
+        {/* Right: FloatingBooks — all screens, stacked on mobile */}
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+          transition={{ duration: 1.6, delay: 0.08 }}
+          style={{
+            flex: isDesktop ? '0 0 50%' : 'none',
+            width: isNarrow ? '100%' : undefined,
+            position: 'relative',
+            height: isMobile ? '260px' : isTablet ? '340px' : '100vh',
+          }}
+        >
+          <Suspense fallback={null}><FloatingBooks /></Suspense>
+          <div style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none',
+            background: isNarrow
+              ? 'linear-gradient(to bottom, #191b1f 0%, transparent 30%), linear-gradient(to top, #191b1f 0%, transparent 25%)'
+              : 'linear-gradient(to left, transparent 38%, #191b1f 100%)',
+          }} />
+        </motion.div>
 
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(to bottom, transparent, #191b1f)', zIndex: 3, pointerEvents: 'none' }} />
       </section>
