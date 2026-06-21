@@ -1,8 +1,7 @@
-/* Journal page — dark vault-ink theme · FloatingBooks ambient loop
-   Same dark aesthetic as the rest of the site */
 import { Suspense, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import FloatingBooks from '../components/three/FloatingBooks'
+import { useResponsive } from '../hooks/useResponsive'
 
 const ease = [0.25, 0, 0.3, 1]
 
@@ -42,6 +41,8 @@ const ARTICLES = [
 const CATEGORIES = ['ALL', 'MATERIAL CULTURE', 'PHILOSOPHY', 'PROCESS', 'SPATIAL THEORY', 'FIELD NOTES']
 
 function ArticleEntry({ article, index }) {
+  const { isMobile, isTablet, isNarrow } = useResponsive()
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 20 }}
@@ -50,63 +51,112 @@ function ArticleEntry({ article, index }) {
       transition={{ duration: 0.55, delay: index * 0.06, ease: 'easeOut' }}
       style={{ borderTop: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', willChange: 'opacity, transform' }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr auto', gap: '0 48px', padding: '38px 0' }}>
-        <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(255,255,255,0.22)', paddingTop: 5 }}>
-          {article.id}
-        </span>
-        <div>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.32)', margin: '0 0 14px' }}>
-            {article.category}
-          </p>
+      {isNarrow ? (
+        /* Mobile / tablet layout */
+        <div style={{ padding: isMobile ? '24px 0 20px' : '30px 0 24px' }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10 }}>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'rgba(255,255,255,0.22)' }}>
+              {article.id}
+            </span>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: 10, color: 'rgba(255,255,255,0.28)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+              {article.category}
+            </span>
+          </div>
           <h3
             style={{
               fontFamily: 'var(--font-albra)', fontWeight: 400,
-              fontSize: 'clamp(18px, 2.2vw, 26px)', lineHeight: 1.2,
+              fontSize: isMobile ? 18 : 22, lineHeight: 1.22,
               letterSpacing: '0.01em', color: '#f5f5f0',
-              margin: '0 0 14px', maxWidth: 680,
-              transition: 'color 0.2s ease',
+              margin: '0 0 10px', transition: 'color 0.2s ease',
             }}
             onMouseEnter={e => { e.currentTarget.style.color = 'rgba(245,245,240,0.55)' }}
             onMouseLeave={e => { e.currentTarget.style.color = '#f5f5f0' }}
           >
             {article.title}
           </h3>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.7, color: '#9fabad', maxWidth: 620, margin: 0 }}>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, lineHeight: 1.65, color: '#9fabad', margin: '0 0 12px' }}>
             {article.excerpt}
           </p>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 10, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase', margin: 0 }}>
+              {article.date}
+            </p>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 10, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', margin: 0 }}>
+              {article.readTime}
+            </p>
+          </div>
         </div>
-        <div style={{ textAlign: 'right', paddingTop: 5, flexShrink: 0 }}>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase', margin: '0 0 8px' }}>
-            {article.date}
-          </p>
-          <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', margin: 0 }}>
-            {article.readTime}
-          </p>
+      ) : (
+        /* Desktop layout */
+        <div style={{ display: 'grid', gridTemplateColumns: '36px 1fr auto', gap: '0 48px', padding: '38px 0' }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(255,255,255,0.22)', paddingTop: 5 }}>
+            {article.id}
+          </span>
+          <div>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.32)', margin: '0 0 14px' }}>
+              {article.category}
+            </p>
+            <h3
+              style={{
+                fontFamily: 'var(--font-albra)', fontWeight: 400,
+                fontSize: 'clamp(18px, 2.2vw, 26px)', lineHeight: 1.2,
+                letterSpacing: '0.01em', color: '#f5f5f0',
+                margin: '0 0 14px', maxWidth: 680,
+                transition: 'color 0.2s ease',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'rgba(245,245,240,0.55)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#f5f5f0' }}
+            >
+              {article.title}
+            </h3>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 15, lineHeight: 1.7, color: '#9fabad', maxWidth: 620, margin: 0 }}>
+              {article.excerpt}
+            </p>
+          </div>
+          <div style={{ textAlign: 'right', paddingTop: 5, flexShrink: 0, minWidth: 100 }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.22)', textTransform: 'uppercase', margin: '0 0 8px' }}>
+              {article.date}
+            </p>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.1em', color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', margin: 0 }}>
+              {article.readTime}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </motion.article>
   )
 }
 
 export default function Journal() {
   const [activeCategory, setActiveCategory] = useState('ALL')
-  const filteredArticles = activeCategory === 'ALL' ? ARTICLES : ARTICLES.filter(a => a.category === activeCategory)
+  const { isMobile, isTablet, isNarrow, isDesktop, navH } = useResponsive()
+  const hPad = isMobile ? '24px' : isTablet ? '40px' : '80px'
+
+  const filteredArticles = activeCategory === 'ALL'
+    ? ARTICLES
+    : ARTICLES.filter(a => a.category === activeCategory)
 
   return (
     <div style={{ background: '#191b1f' }}>
 
-      {/* ── HERO (vault ink · DM Serif Display · FloatingBooks ambient loop) ── */}
+      {/* ── HERO ── */}
       <section style={{
         background: '#191b1f', minHeight: '100vh',
-        display: 'flex', alignItems: 'stretch',
-        position: 'relative', paddingTop: 72, overflow: 'hidden',
+        display: 'flex',
+        flexDirection: isNarrow ? 'column' : 'row',
+        alignItems: isNarrow ? 'flex-start' : 'stretch',
+        position: 'relative', paddingTop: navH, overflow: 'hidden',
       }}>
-        {/* Left: text on dark canvas */}
-        <div style={{ flex: '0 0 50%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '80px 48px 80px 80px', position: 'relative', zIndex: 2 }}>
+        <div style={{
+          flex: isDesktop ? '0 0 50%' : '1',
+          display: 'flex', flexDirection: 'column', justifyContent: 'center',
+          padding: isMobile ? `48px 24px 64px` : isTablet ? `56px 40px 72px` : '80px 48px 80px 80px',
+          position: 'relative', zIndex: 2,
+        }}>
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', marginBottom: 36 }}
+            style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.25)', marginBottom: 32 }}
           >
             Thinking in public
           </motion.p>
@@ -115,7 +165,7 @@ export default function Journal() {
             <motion.h1
               initial={{ y: 88, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.95, delay: 0.22, ease }}
-              style={{ fontFamily: 'var(--font-albra)', fontWeight: 400, fontSize: 'clamp(60px, 8vw, 104px)', lineHeight: 1.02, letterSpacing: '0.012em', color: '#f5f5f0', margin: '0 0 36px' }}
+              style={{ fontFamily: 'var(--font-albra)', fontWeight: 400, fontSize: 'clamp(52px, 13vw, 104px)', lineHeight: 1.02, letterSpacing: '0.012em', color: '#f5f5f0', margin: '0 0 28px' }}
             >
               The Journal.
             </motion.h1>
@@ -124,12 +174,12 @@ export default function Journal() {
           <motion.p
             initial={{ y: 32, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.85, delay: 0.5, ease }}
-            style={{ fontFamily: 'var(--font-body)', fontSize: 18, lineHeight: 1.65, color: '#9fabad', maxWidth: 420 }}
+            style={{ fontFamily: 'var(--font-body)', fontSize: isMobile ? 15 : 18, lineHeight: 1.65, color: '#9fabad', maxWidth: 420 }}
           >
             Essays and observations on material culture, spatial theory, and the practice of considered design. Published when we have something to say.
           </motion.p>
 
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.72 }} style={{ marginTop: 44 }}>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.72 }} style={{ marginTop: 36 }}>
             <button
               style={{
                 background: 'transparent', color: '#f5f5f0',
@@ -146,22 +196,24 @@ export default function Journal() {
           </motion.div>
         </div>
 
-        {/* Right: FloatingBooks ambient loop */}
-        <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          transition={{ duration: 1.6, delay: 0.08 }}
-          style={{ flex: '0 0 50%', position: 'relative', height: '100vh' }}
-        >
-          <Suspense fallback={null}><FloatingBooks /></Suspense>
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(to left, transparent 38%, #191b1f 100%)' }} />
-        </motion.div>
+        {/* Right: FloatingBooks — desktop only */}
+        {isDesktop && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ duration: 1.6, delay: 0.08 }}
+            style={{ flex: '0 0 50%', position: 'relative', height: '100vh' }}
+          >
+            <Suspense fallback={null}><FloatingBooks /></Suspense>
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(to left, transparent 38%, #191b1f 100%)' }} />
+          </motion.div>
+        )}
 
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 120, background: 'linear-gradient(to bottom, transparent, #191b1f)', zIndex: 3, pointerEvents: 'none' }} />
       </section>
 
       {/* ── CATEGORY FILTER ── */}
-      <section style={{ background: '#191b1f', padding: '40px 80px 0' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 32 }}>
+      <section style={{ background: '#191b1f', padding: `${isMobile ? '28px' : '40px'} ${hPad} 0` }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 24 }}>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {CATEGORIES.map(cat => (
               <button
@@ -171,9 +223,10 @@ export default function Journal() {
                   background: 'transparent',
                   color: activeCategory === cat ? '#f5f5f0' : 'rgba(255,255,255,0.32)',
                   border: `1px solid ${activeCategory === cat ? 'rgba(255,255,255,0.38)' : 'rgba(255,255,255,0.12)'}`,
-                  borderRadius: 2, padding: '8px 16px',
-                  fontFamily: 'var(--font-body)', fontSize: 11, fontWeight: 400,
-                  letterSpacing: '0.1em', textTransform: 'uppercase',
+                  borderRadius: 2,
+                  padding: isMobile ? '7px 12px' : '8px 16px',
+                  fontFamily: 'var(--font-body)', fontSize: isMobile ? 10 : 11, fontWeight: 400,
+                  letterSpacing: '0.08em', textTransform: 'uppercase',
                   cursor: 'pointer', transition: 'all 0.18s ease',
                 }}
                 onMouseEnter={e => { if (activeCategory !== cat) { e.currentTarget.style.color = '#f5f5f0'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)' } }}
@@ -187,7 +240,7 @@ export default function Journal() {
       </section>
 
       {/* ── ARTICLES ── */}
-      <section style={{ background: '#191b1f', padding: '24px 80px 48px' }}>
+      <section style={{ background: '#191b1f', padding: `16px ${hPad} ${isMobile ? '40px' : '48px'}` }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <AnimatePresence mode="wait">
             <motion.div
@@ -200,7 +253,14 @@ export default function Journal() {
               ))}
             </motion.div>
           </AnimatePresence>
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 48, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{
+            borderTop: '1px solid rgba(255,255,255,0.1)',
+            paddingTop: 40,
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center',
+            gap: 20,
+          }}>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               {filteredArticles.length} {filteredArticles.length === 1 ? 'essay' : 'essays'} · Vol. I
             </p>
@@ -221,20 +281,26 @@ export default function Journal() {
         </div>
       </section>
 
-      {/* ── SUBSCRIBE (deep dark panel) ── */}
-      <section style={{ background: '#111316', padding: '96px 80px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+      {/* ── SUBSCRIBE ── */}
+      <section style={{ background: '#111316', padding: `${isMobile ? '64px' : '96px'} ${hPad}` }}>
+        <div style={{
+          maxWidth: 1280, margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: isNarrow ? '1fr' : '1fr 1fr',
+          gap: isNarrow ? 40 : 80,
+          alignItems: 'center',
+        }}>
           <motion.div
             initial={{ y: 40, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
             viewport={{ once: true }} transition={{ duration: 0.85, ease }}
           >
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', margin: '0 0 24px' }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.22)', margin: '0 0 20px' }}>
               The Letter
             </p>
-            <h2 style={{ fontFamily: 'var(--font-albra)', fontWeight: 400, fontSize: 'clamp(30px, 4vw, 48px)', lineHeight: 1.1, letterSpacing: '0.015em', color: '#f5f5f0', margin: '0 0 20px' }}>
+            <h2 style={{ fontFamily: 'var(--font-albra)', fontWeight: 400, fontSize: 'clamp(26px, 4vw, 48px)', lineHeight: 1.1, letterSpacing: '0.015em', color: '#f5f5f0', margin: '0 0 16px' }}>
               Occasional essays.<br /><em>No frequency promised.</em>
             </h2>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: 16, lineHeight: 1.65, color: '#9fabad', margin: 0 }}>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: isMobile ? 14 : 16, lineHeight: 1.65, color: '#9fabad', margin: 0 }}>
               We publish when we have something to say. Subscribers receive each new essay directly. No editorial calendar — just writing when the work demands it.
             </p>
           </motion.div>
@@ -250,6 +316,7 @@ export default function Journal() {
                   background: 'transparent', border: '1px solid rgba(255,255,255,0.18)', borderRadius: 2,
                   padding: '14px 20px', fontFamily: 'var(--font-body)', fontSize: 15, color: '#f5f5f0',
                   outline: 'none', width: '100%', transition: 'border-color 0.2s ease',
+                  boxSizing: 'border-box',
                 }}
                 onFocus={e => { e.target.style.borderColor = 'rgba(255,255,255,0.45)' }}
                 onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,0.18)' }}

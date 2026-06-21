@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import ChromePolyhedron from '../components/three/ChromePolyhedron'
+import { useResponsive } from '../hooks/useResponsive'
 
 const ease = [0.16, 1, 0.3, 1]
 
@@ -32,60 +33,82 @@ const PREVIEWS = [
 ]
 
 const EXPLORE = [
-  { to: '/work',     label: 'Our Work',    sub: 'Selected portfolio across three continents.',         bg: '#0e1012' },
-  { to: '/studio',   label: 'The Studio',  sub: 'Twelve years of people, practice, and philosophy.',  bg: '#0c0e10' },
-  { to: '/services', label: 'Services',    sub: 'Residences, hospitality, cultural institutions.',     bg: '#10100e' },
-  { to: '/contact',  label: 'Begin',       sub: 'Start a conversation about your next commission.',    bg: '#0a0c0e' },
+  { to: '/work',     label: 'Our Work',    sub: 'Selected portfolio across three continents.',        bg: '#0e1012' },
+  { to: '/studio',   label: 'The Studio',  sub: 'Twelve years of people, practice, and philosophy.', bg: '#0c0e10' },
+  { to: '/services', label: 'Services',    sub: 'Residences, hospitality, cultural institutions.',    bg: '#10100e' },
+  { to: '/contact',  label: 'Begin',       sub: 'Start a conversation about your next commission.',   bg: '#0a0c0e' },
 ]
 
 export default function Home() {
+  const { isMobile, isTablet, isNarrow, isDesktop, pad, navH } = useResponsive()
+
+  const py   = isMobile ? '56px' : '80px'
+  const hPad = isMobile ? '24px' : isTablet ? '40px' : '80px'
+
   return (
     <div style={{ background: '#000000' }}>
 
-      {/* ── HERO (Sequel void black) ── */}
+      {/* ── HERO ── */}
       <section style={{
         background: '#000000', minHeight: '100vh',
-        display: 'flex', alignItems: 'stretch',
-        position: 'relative', overflow: 'hidden', paddingTop: 72,
+        display: 'flex',
+        flexDirection: isNarrow ? 'column' : 'row',
+        alignItems: isNarrow ? 'flex-start' : 'stretch',
+        position: 'relative', overflow: 'hidden', paddingTop: navH,
       }}>
+        {/* Left / text panel */}
         <div style={{
-          flex: '0 0 50%', display: 'flex', flexDirection: 'column',
-          justifyContent: 'center', padding: '80px 48px 80px 80px',
+          flex: isDesktop ? '0 0 50%' : '1',
+          display: 'flex', flexDirection: 'column',
+          justifyContent: 'center',
+          padding: isMobile
+            ? `48px 24px 72px`
+            : isTablet
+            ? `64px 40px 80px`
+            : '80px 48px 80px 80px',
           position: 'relative', zIndex: 2,
         }}>
           <motion.p {...fadeUp(0.15, 20)} style={{
-            fontFamily: 'var(--font-body)', fontWeight: 400, fontSize: 12,
+            fontFamily: 'var(--font-body)', fontWeight: 400, fontSize: 11,
             color: 'rgba(255,255,255,0.32)', letterSpacing: '0.18em',
-            textTransform: 'uppercase', marginBottom: 40,
+            textTransform: 'uppercase', marginBottom: isMobile ? 28 : 40,
           }}>
             Est. 2012 &nbsp;·&nbsp; London &amp; New York &nbsp;·&nbsp; Interior Design
           </motion.p>
 
           <motion.h1 {...fadeUp(0.28, 72)} style={{
             fontFamily: 'var(--font-bradford)', fontWeight: 500,
-            fontSize: 'clamp(72px, 9vw, 136px)', lineHeight: 0.95,
+            fontSize: 'clamp(64px, 14vw, 136px)', lineHeight: 0.95,
             letterSpacing: '-0.045em', color: '#ffffff', margin: 0,
           }}>
             Noir<br />&amp;<br />Form.
           </motion.h1>
 
           <motion.p {...fadeUp(0.5, 32)} style={{
-            fontFamily: 'var(--font-albra)', fontWeight: 400, fontSize: 22,
+            fontFamily: 'var(--font-albra)', fontWeight: 400,
+            fontSize: isMobile ? 18 : 22,
             lineHeight: 1.35, letterSpacing: '0.018em',
-            color: 'rgba(255,255,255,0.5)', marginTop: 36, maxWidth: 420,
+            color: 'rgba(255,255,255,0.5)', marginTop: 28, maxWidth: 420,
           }}>
             Spaces that articulate the intersection of material culture and lived experience.
           </motion.p>
 
-          <motion.div {...fadeUp(0.65, 24)} style={{ marginTop: 52, display: 'flex', gap: 24, alignItems: 'center' }}>
+          <motion.div
+            {...fadeUp(0.65, 24)}
+            style={{
+              marginTop: isMobile ? 36 : 52,
+              display: 'flex', gap: 20, alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
             <Link to="/work" style={{ textDecoration: 'none' }}>
               <motion.div
                 whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
                 style={{
                   background: 'transparent', color: '#ffffff',
                   border: '1px solid rgba(255,255,255,0.42)',
-                  borderRadius: '9999px', padding: '15px 38px',
-                  fontFamily: 'var(--font-body)', fontWeight: 400, fontSize: 15,
+                  borderRadius: '9999px', padding: '14px 32px',
+                  fontFamily: 'var(--font-body)', fontWeight: 400, fontSize: 14,
                   cursor: 'pointer',
                   transition: 'background 0.28s ease, color 0.28s ease, border-color 0.28s ease',
                 }}
@@ -118,36 +141,42 @@ export default function Home() {
             </Link>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            transition={{ delay: 1.9, duration: 1 }}
-            style={{ position: 'absolute', bottom: 48, left: 80, display: 'flex', alignItems: 'center', gap: 14 }}
-          >
+          {/* Scroll indicator — desktop only */}
+          {isDesktop && (
             <motion.div
-              animate={{ scaleX: [1, 1.5, 1] }}
-              transition={{ repeat: Infinity, duration: 2.4, ease: 'easeInOut' }}
-              style={{ width: 36, height: 1, background: 'rgba(255,255,255,0.22)', transformOrigin: 'left' }}
-            />
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
-              Scroll
-            </span>
-          </motion.div>
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              transition={{ delay: 1.9, duration: 1 }}
+              style={{ position: 'absolute', bottom: 48, left: 80, display: 'flex', alignItems: 'center', gap: 14 }}
+            >
+              <motion.div
+                animate={{ scaleX: [1, 1.5, 1] }}
+                transition={{ repeat: Infinity, duration: 2.4, ease: 'easeInOut' }}
+                style={{ width: 36, height: 1, background: 'rgba(255,255,255,0.22)', transformOrigin: 'left' }}
+              />
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 11, color: 'rgba(255,255,255,0.22)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                Scroll
+              </span>
+            </motion.div>
+          )}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.6, delay: 0.05, ease }}
-          style={{ flex: '0 0 50%', position: 'relative', height: '100vh' }}
-        >
-          <Suspense fallback={null}><ChromePolyhedron /></Suspense>
-          <div style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            background: `
-              radial-gradient(ellipse 85% 95% at 60% 50%, transparent 32%, #000000 100%),
-              linear-gradient(to left, transparent 68%, #000000 100%)
-            `,
-          }} />
-        </motion.div>
+        {/* Right / 3D panel — desktop only */}
+        {isDesktop && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.6, delay: 0.05, ease }}
+            style={{ flex: '0 0 50%', position: 'relative', height: '100vh' }}
+          >
+            <Suspense fallback={null}><ChromePolyhedron /></Suspense>
+            <div style={{
+              position: 'absolute', inset: 0, pointerEvents: 'none',
+              background: `
+                radial-gradient(ellipse 85% 95% at 60% 50%, transparent 32%, #000000 100%),
+                linear-gradient(to left, transparent 68%, #000000 100%)
+              `,
+            }} />
+          </motion.div>
+        )}
 
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0,
@@ -157,9 +186,12 @@ export default function Home() {
       </section>
 
       {/* ── PROJECT PREVIEW STRIP ── */}
-      <section style={{ background: '#000000', padding: '96px 80px 56px' }}>
+      <section style={{ background: '#000000', padding: `${isMobile ? '64px' : '96px'} ${hPad} ${isMobile ? '40px' : '56px'}` }}>
         <div style={{ maxWidth: 'var(--page-max-width)', margin: '0 auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 36 }}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+            marginBottom: isMobile ? 24 : 36, flexWrap: 'wrap', gap: 8,
+          }}>
             <motion.p
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
               viewport={{ once: true }} transition={{ duration: 0.7 }}
@@ -178,7 +210,11 @@ export default function Home() {
             </Link>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
+            gap: 20,
+          }}>
             {PREVIEWS.map((proj, i) => (
               <motion.div
                 key={proj.title}
@@ -209,8 +245,13 @@ export default function Home() {
       </section>
 
       {/* ── MANIFESTO STRIP ── */}
-      <section style={{ background: '#000000', padding: '72px 80px 80px', borderTop: '1px solid rgba(255,255,255,0.055)' }}>
-        <div style={{ maxWidth: 'var(--page-max-width)', margin: '0 auto', display: 'flex', gap: 0, overflow: 'hidden' }}>
+      <section style={{ background: '#000000', padding: `${isMobile ? '48px' : '72px'} ${hPad} ${isMobile ? '56px' : '80px'}`, borderTop: '1px solid rgba(255,255,255,0.055)' }}>
+        <div style={{
+          maxWidth: 'var(--page-max-width)', margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+          gap: isMobile ? '16px 8px' : 0,
+        }}>
           {['Precision.', 'Form.', 'Silence.', 'Light.'].map((word, i) => (
             <motion.p
               key={word}
@@ -219,12 +260,11 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.85, delay: i * 0.07, ease }}
               style={{
-                flex: 1,
                 fontFamily: 'var(--font-bradford)', fontWeight: 500,
-                fontSize: 'clamp(26px, 3.8vw, 58px)', lineHeight: 1.0,
-                letterSpacing: '-0.03em',
+                fontSize: isMobile ? 'clamp(24px, 8vw, 40px)' : 'clamp(26px, 3.8vw, 58px)',
+                lineHeight: 1.0, letterSpacing: '-0.03em',
                 color: i % 2 === 0 ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.2)',
-                margin: 0, padding: '0 16px 0 0',
+                margin: 0, padding: isDesktop ? '0 16px 0 0' : 0,
               }}
             >
               {word}
@@ -234,10 +274,12 @@ export default function Home() {
       </section>
 
       {/* ── EXPLORE GRID ── */}
-      <section style={{ background: '#000000', padding: '40px 80px 128px', borderTop: '1px solid rgba(255,255,255,0.055)' }}>
+      <section style={{ background: '#000000', padding: `40px ${hPad} ${isMobile ? '80px' : '128px'}`, borderTop: '1px solid rgba(255,255,255,0.055)' }}>
         <div style={{
           maxWidth: 'var(--page-max-width)', margin: '0 auto',
-          display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16,
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+          gap: 16,
         }}>
           {EXPLORE.map((item, i) => (
             <Link key={item.to} to={item.to} style={{ textDecoration: 'none' }}>
@@ -250,10 +292,11 @@ export default function Home() {
                 style={{
                   background: item.bg,
                   border: '1px solid rgba(255,255,255,0.07)',
-                  borderRadius: 8, padding: '40px 44px',
+                  borderRadius: 8,
+                  padding: isMobile ? '32px 28px' : '40px 44px',
                   cursor: 'pointer',
                   transition: 'border-color 0.25s ease, background 0.25s ease',
-                  display: 'flex', flexDirection: 'column', gap: 14, minHeight: 160,
+                  display: 'flex', flexDirection: 'column', gap: 14, minHeight: 148,
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)'
@@ -264,7 +307,7 @@ export default function Home() {
                   e.currentTarget.style.background = item.bg
                 }}
               >
-                <p style={{ fontFamily: 'var(--font-bradford)', fontSize: 30, color: '#ffffff', margin: 0, letterSpacing: '-0.025em', lineHeight: 1.0 }}>{item.label}</p>
+                <p style={{ fontFamily: 'var(--font-bradford)', fontSize: isMobile ? 24 : 30, color: '#ffffff', margin: 0, letterSpacing: '-0.025em', lineHeight: 1.0 }}>{item.label}</p>
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(255,255,255,0.38)', margin: 0, lineHeight: 1.55 }}>{item.sub}</p>
                 <span style={{ fontFamily: 'var(--font-body)', fontSize: 14, color: 'rgba(255,255,255,0.25)', marginTop: 'auto' }}>→</span>
               </motion.div>
